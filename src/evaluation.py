@@ -26,6 +26,7 @@ if __name__ == '__main__':
         file_type, 
         target_column, 
         sample_identifier, 
+        b_eval=True
     )
     # divide data into train, validation, and test sets
     X_train, X_val, y_train, y_val, num_classes = data_ready(train_val_data, val_split, split_name, False, target_column)

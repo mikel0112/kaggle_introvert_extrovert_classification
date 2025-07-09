@@ -28,10 +28,11 @@ if __name__ == '__main__':
             test_path, 
             file_type, 
             None,  # No target column in test data
-            params['data_preprocessing']['sample_identificator_column']
+            params['data_preprocessing']['sample_identificator_column'],
+            b_eval=True
         )
         last_training = params['training']['last_training']
-        X_test = data_ready(data, 0, split_name, last_training)  # No split needed for test data
+        X_test = data_ready(data, 0, split_name, last_training, target_column=None)  # No split needed for test data
         # Evaluate model
         y_pred = model.model.predict(X_test)
 

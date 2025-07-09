@@ -5,6 +5,8 @@ import joblib
 import json
 import os
 from data_preprocessing import DataPreprocessing, DataAnalysis
+from sklearn.model_selection import GridSearchCV, KFold
+import xgboost as xgb
 import datetime
 import yaml
 from models import XGBoostModel
@@ -15,6 +17,7 @@ def load_data_plus_preprocessing(
         file_type, 
         target_column, 
         sample_identifier=None,
+        b_eval=False
     ):
     # Load data
     if file_type == 'csv':
@@ -35,7 +38,7 @@ def load_data_plus_preprocessing(
 
     ######### END Data Preprocessing #########
     
-    if target_column is not None:
+    if not b_eval:
         ######### START Data Analysis #########
 
         # create a report with the data analysis outputs
@@ -93,7 +96,8 @@ if __name__ == '__main__':
         data_path, 
         file_type, 
         target_column, 
-        sample_identifier, 
+        sample_identifier,
+        b_eval=False
     )
 
     # get data ready for training
@@ -125,19 +129,50 @@ if __name__ == '__main__':
             eval_set=None, 
             verbose=params['training']['verbose']
         )
+    elif params['training']['first_training'] and params['model']['name'] == 'xgboost':
+        # gridsearchcv using k-fold cross validation
+        print("Performing grid search with cross-validation.")
+        kf = KFold(n_splits=5, shuffle=True, random_state=42)
+        params_grid = {
+            'n_estimators': [50, 100, 200],
+            'max_depth': [3, 5, 7],
+            'learning_rate': [0.01, 0.1, 0.2],
+            'colsample_bytree': [0.3, 0.5, 0.7],
+            'subsample': [0.5, 0.7, 1.0]
+        }
+        # eliminate early_stopping_rounds
+        model.model.set_params(early_stopping_rounds=None)
+        grid_search = GridSearchCV(
+            model.model, 
+            param_grid=params_grid, 
+            scoring='neg_log_loss', 
+            cv=kf, 
+            verbose=1, 
+            n_jobs=-1
+        )
+        grid_search.fit(
+            X_train,
+            y_train,
+            eval_set=[(X_train, y_train)]
+        )
+        # save models performances
+        os.makedirs(f'outputs/grid_search/{params["model"]["name"]}', exist_ok=True)
+        results_df = pd.DataFrame(grid_search.cv_results_)
+        best_result = results_df.loc[results_df['rank_test_score'] == 1]
+        best_result.to_csv(f'outputs/grid_search/{params["model"]["name"]}/best_result.csv', index=False)
+        results_df.to_csv(f'outputs/grid_search/{params["model"]["name"]}/grid_search_results.csv', index=False)
     else:
         print("Training model with validation split.")
         # Fit model with training and validation data
         model.model.fit(
             X_train, 
             y_train, 
-            eval_set=[(X_train, y_train), (X_val, y_val)], 
-            #early_stopping_rounds=params['training']['early_stopping_rounds'], 
+            eval_set=[(X_train, y_train), (X_val, y_val)],  
             verbose=params['training']['verbose']
         )
 
     # graph showing training and validation loss
-    if not last_training:
+    if not last_training and not params['training']['first_training']:
         os.makedirs(f'outputs/training/{params["model"]["name"]}', exist_ok=True)
         # make graph of training and validation loss
         plt.figure(figsize=(10, 5))
@@ -151,7 +186,7 @@ if __name__ == '__main__':
         plt.close()
         # save model
         joblib.dump(model, f'outputs/training/{params["model"]["name"]}/model.pkl')
-    else:
+    elif last_training:
         os.makedirs(f'outputs/training/{params["model"]["name"]}{last}', exist_ok=True)
         # Save model
         joblib.dump(model, f'outputs/training/{params["model"]["name"]}{last}/model.pkl')

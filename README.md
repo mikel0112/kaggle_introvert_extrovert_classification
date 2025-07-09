@@ -9,6 +9,7 @@ It  is inividual to every dataset. They final dataframe needs to have just numer
 ### 3. Data Analysis
 ## Models
 ## Training stage
+If working with xgboost first make a gridsearchcv and then based on the best params adjust, it is done using k-fold cross validation. For doing so, params, first training parameter. Then use best values to train the model and evaluate it, if it es enough, predict.
 Try different models and settings.
 ## Evaluation stage
 Evaluate every single model. Finally, with the best model [go to training stage](#training-stage) and using the whole training dataset without splitting it into train and val sets train again the best model and save it to use it for predictions (in params there is a parameter called last_training if it is ture the train data is not splitted).

@@ -15,6 +15,7 @@ class XGBoostModel:
                     learning_rate=params['model']['hyperparameters']['learning_rate'],
                     colsample_bytree=params['model']['hyperparameters']['colsample_bytree'],
                     subsample=params['model']['hyperparameters']['subsample'],
+                    early_stopping_rounds=params['training']['early_stopping_rounds'],
                 )
             else:
                 self.model = xgb.XGBClassifier(
@@ -27,6 +28,7 @@ class XGBoostModel:
                     learning_rate=params['model']['hyperparameters']['learning_rate'],
                     colsample_bytree=params['model']['hyperparameters']['colsample_bytree'],
                     subsample=params['model']['hyperparameters']['subsample'],
+                    early_stopping_rounds=params['training']['early_stopping_rounds'],
                 )
         elif model_type == 'regression':
             self.model = xgb.XGBRegressor(
@@ -39,6 +41,7 @@ class XGBoostModel:
                 learning_rate=params['model']['hyperparameters']['learning_rate'],
                 colsample_bytree=params['model']['hyperparameters']['colsample_bytree'],
                 subsample=params['model']['hyperparameters']['subsample'],
+                early_stopping_rounds=params['training']['early_stopping_rounds'],
             )
         else:
             raise ValueError("Unsupported model type. Please use 'classification' or 'regression'.")
