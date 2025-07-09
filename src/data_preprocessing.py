@@ -80,7 +80,8 @@ class DataAnalysis:
 
     def correlation_matrix(self):
         corr = self.df.corr()
-        plt.figure(figsize=(48, 40))
+        num_vars = corr.shape[0]
+        plt.figure(figsize=(num_vars, num_vars))
         plt.title('Correlation Matrix', fontsize=40)
         sns.heatmap(corr, annot=True, cmap='coolwarm', center=0)
         os.makedirs('outputs/DataAnalysis', exist_ok=True)

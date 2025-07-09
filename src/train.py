@@ -123,10 +123,11 @@ if __name__ == '__main__':
     # Train model
     if last_training:
         print("Training model with all data without validation split.")
+        model.model.set_params(early_stopping_rounds=None)
         model.model.fit(
             X_train, 
             y_train, 
-            eval_set=None, 
+            eval_set=[(X_train, y_train)], 
             verbose=params['training']['verbose']
         )
     elif params['training']['first_training'] and params['model']['name'] == 'xgboost':

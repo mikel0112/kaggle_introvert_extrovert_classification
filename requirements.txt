@@ -10,3 +10,4 @@ mlxtend
 openpyxl
 albumentations
 PyYAML
+pytorch-tabular
