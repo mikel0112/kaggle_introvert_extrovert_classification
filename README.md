@@ -7,3 +7,11 @@ It is divided into three main classes.
 It  is inividual to every dataset. They final dataframe needs to have just numerical and categorical columns.
 ### 2. Data Preprocessing
 ### 3. Data Analysis
+## Models
+## Training stage
+Try different models and settings.
+## Evaluation stage
+Evaluate every single model. Finally, with the best model [go to training stage](#training-stage) and using the whole training dataset without splitting it into train and val sets train again the best model and save it to use it for predictions (in params there is a parameter called last_training if it is ture the train data is not splitted).
+Evaluations done in the three splits: train, val and test. Important to look at the best performance in test because of overtraining.
+## Predictions stage
+Only used for competitions like Kaggle so paramater Kaggle in params needs to be true. It makes a csv of the style needed to submit in the competition.

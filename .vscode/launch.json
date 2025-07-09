@@ -11,6 +11,34 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Data Preprocessing",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/data_preprocessing.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Training",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/train.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Evaluation",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/evaluation.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Predictions",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/predictions.py",
+            "console": "integratedTerminal"
         }
     ]
 }
